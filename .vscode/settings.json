@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "stdio.h": "c",
+        "command_handler.h": "c",
+        "stdlib.h": "c"
+    }
+}

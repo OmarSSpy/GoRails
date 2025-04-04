@@ -2,6 +2,7 @@ package router
 
 import (
 	"fmt"
+	"gorails/core/controllers"
 	"net/http"
 	"regexp"
 	"strings"
@@ -22,6 +23,12 @@ func NewRouter() *Router {
 	return &Router{
 		routes: make(map[string][]Route),
 	}
+}
+
+func (r *Router) HandleController(method, path string, controller controllers.BaseRailController) {
+	r.Handle(method, path, func(w http.ResponseWriter, req *http.Request, params map[string]string) {
+		controller.Handle(w, req, params)
+	})
 }
 
 func (r *Router) Handle(method, path string, handler HandlerFunc) {
@@ -51,6 +58,10 @@ func (r *Router) Handle(method, path string, handler HandlerFunc) {
 
 func (r *Router) GET(path string, handler HandlerFunc) {
 	r.Handle("GET", path, handler)
+}
+
+func (r *Router) GETController(path string, controller controllers.BaseRailController) {
+	r.HandleController("GET", path, controller)
 }
 
 func (r *Router) POST(path string, handler HandlerFunc) {

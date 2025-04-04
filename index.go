@@ -3,21 +3,19 @@ package main
 import (
 	"fmt"
 	"gorails/core/router"
+	"gorails/core/template"
 	"net/http"
 )
 
 func main() {
+	template.LoadTemplates()
 	r := router.NewRouter()
 
-	// Static route
+	// Route with HTML rendering
 	r.GET("/", func(w http.ResponseWriter, r *http.Request, _ map[string]string) {
-		fmt.Fprintln(w, "Welcome to GoRails!")
+		template.Render(w, "index.html", map[string]string{"Title": "Welcome to GoRails!"})
 	})
 
-	// Dynamic route
-	r.GET("/user/:id", func(w http.ResponseWriter, r *http.Request, params map[string]string) {
-		fmt.Fprintf(w, "User ID: %s", params["id"])
-	})
-
+	fmt.Println("Server is running on port 8000")
 	http.ListenAndServe(":8000", r)
 }
