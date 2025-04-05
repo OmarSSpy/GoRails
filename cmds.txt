@@ -1,0 +1,2 @@
+gcc gorails.c command_handler.c -o GoRailsCLI
+

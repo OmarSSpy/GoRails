@@ -21,12 +21,38 @@ void create_file(const char *filename, const char *content) {
 
 void create_project(const char *name) {
     printf("Creating a new GoRails project called %s...\n", name);
-    char command[256];
-    sprintf(command, "mkdir -p %s/{controllers,models,views,routes}",name);
+
+    // Windows-compatible mkdir
+    char command[512];
+    sprintf(command,
+        "mkdir %s && mkdir %s\\controllers && mkdir %s\\models && mkdir %s\\views && mkdir %s\\routes && mkdir %s\\public",
+        name, name, name, name, name);
     system(command);
-    create_dir("controllers");
-    create_dir("views");
+
+    // Create index.go
+    char file_path[256];
+    sprintf(file_path, "%s\\index.go", name);  // use \\ for Windows paths
+    create_file(file_path,
+        "package main\n\n"
+        "import (\n"
+        "\t\"fmt\"\n"
+        "\t\"gorails/core/router\"\n"
+        "\t\"net/http\"\n"
+        ")\n\n"
+        "func main() {\n"
+        "\tr := router.NewRouter()\n"
+        "\tr.GET(\"/\", func(w http.ResponseWriter, r *http.Request, _ map[string]string) {\n"
+        "\t\tfmt.Fprintln(w, \"<h1>Welcome to your new GoRails app!</h1>\")\n"
+        "\t})\n\n"
+        "\tfmt.Println(\"Server is running on port 8000\")\n"
+        "\thttp.ListenAndServe(\":8000\", r)\n"
+        "}\n"
+    );
+
+    printf("✅ Project %s created successfully!\n", name);
+    printf("➡️  To start: cd %s && gorails start\n", name);
 }
+
 
 void run_server() {
     printf("Starting the server...\n");

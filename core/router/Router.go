@@ -16,12 +16,14 @@ type Route struct {
 	handler HandlerFunc
 }
 type Router struct {
-	routes map[string][]Route
+	routes    map[string][]Route
+	staticDir string
 }
 
 func NewRouter() *Router {
 	return &Router{
-		routes: make(map[string][]Route),
+		routes:    make(map[string][]Route),
+		staticDir: "",
 	}
 }
 
@@ -29,6 +31,11 @@ func (r *Router) HandleController(method, path string, controller controllers.Ba
 	r.Handle(method, path, func(w http.ResponseWriter, req *http.Request, params map[string]string) {
 		controller.Handle(w, req, params)
 	})
+}
+
+func (r *Router) SetStaticDir(urlPath, dir string) {
+	r.staticDir = dir
+	http.Handle(urlPath, http.StripPrefix(urlPath, http.FileServer(http.Dir(dir))))
 }
 
 func (r *Router) Handle(method, path string, handler HandlerFunc) {
